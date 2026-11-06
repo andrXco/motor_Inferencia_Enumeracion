@@ -1,0 +1,33 @@
+[NODO]
+Rain
+estados: none, light, heavy
+padres: -
+none: 0.7
+light: 0.2
+heavy: 0.1
+
+[NODO]
+Maintenance
+estados: yes, no
+padres: Rain
+none | yes: 0.4, no: 0.6
+light | yes: 0.2, no: 0.8
+heavy | yes: 0.1, no: 0.9
+
+[NODO]
+Train
+estados: on time, delayed
+padres: Rain, Maintenance
+none, yes | on time: 0.8, delayed: 0.2
+none, no | on time: 0.9, delayed: 0.1
+light, yes | on time: 0.6, delayed: 0.4
+light, no | on time: 0.7, delayed: 0.3
+heavy, yes | on time: 0.4, delayed: 0.6
+heavy, no | on time: 0.5, delayed: 0.5
+
+[NODO]
+Appointment
+estados: attend, miss
+padres: Train
+on time | attend: 0.9, miss: 0.1
+delayed | attend: 0.6, miss: 0.4
