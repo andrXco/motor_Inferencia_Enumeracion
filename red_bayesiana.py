@@ -95,3 +95,18 @@ class RedBayesiana:
             print("Estados:", nodo.estado)
             print("Padres:", padres)
             print("Hijos:", hijos)
+
+def calcular_probabilidad_conjunta(self, asignacion):
+
+    probabilidad = 1
+
+    for nombre in asignacion:
+
+        nodo = self.obtener_nodo(nombre)
+
+        probabilidad *= nodo.obtener_probabilidad(
+            asignacion[nombre],
+            asignacion
+        )
+
+    return probabilidad

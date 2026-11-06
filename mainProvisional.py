@@ -17,16 +17,5 @@ asignacion = {
     "Appointment": "attend"
 }
 # TRAER EL NODO QUE QUEREMOS AVERIGUAR
-appointment = red.obtener_nodo("Appointment")
 
-
-#Aqui ponemos el numero para guardar la probabilidad que nos va a salir
-probabilidad = 1
-
-for nombre in asignacion:
-
-    nodo = red.obtener_nodo(nombre)
-
-    probabilidad *= nodo.obtenerProbabilidad(asignacion[nombre],asignacion)
-
-print("\nProbabilidad conjunta:", probabilidad) #ESTE ES EL EJERCICIO QUE HICIMOS EN CLASE
+probabilidad = red.calcular_probabilidad_conjunta(asignacion)
