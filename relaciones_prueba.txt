@@ -1,2 +1,2 @@
-Gripa -> Congestion
 Alergia -> Congestion
+Gripa -> Congestion
