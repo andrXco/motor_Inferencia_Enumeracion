@@ -4,6 +4,8 @@ class RedBayesiana:
         self.nodos = {}
 
     def agregar_nodo(self, nodo):
+        if nodo.nombre in self.nodos:
+            raise ValueError("Nodo duplicado: " + nodo.nombre)
         self.nodos[nodo.nombre] = nodo
 
     def obtener_nodo(self, nombre):
@@ -196,6 +198,34 @@ class RedBayesiana:
     def inferencia_por_enumeracion(self, nombre_consulta, evidencia):
 
         nodo = self.obtener_nodo(nombre_consulta)
+
+        if not isinstance(evidencia, dict):
+            raise ValueError("La evidencia debe ser un diccionario")
+
+        if nombre_consulta in evidencia:
+            raise ValueError(
+                "La variable consultada no debe estar incluida en la evidencia"
+            )
+
+        for nombre, estado in evidencia.items():
+            observado = self.obtener_nodo(nombre)
+
+            if estado not in observado.estado:
+                raise ValueError(
+                    "Estado inválido para " + nombre + ". Válidos: "
+                    + str(observado.estado)
+                )
+
+        ocultas = [
+            otro.nombre for otro in self.orden_topologico()
+            if otro.nombre != nombre_consulta and otro.nombre not in evidencia
+        ]
+
+        print("\nINFERENCIA POR ENUMERACIÓN")
+        print("Consulta X:", nombre_consulta)
+        print("Evidencia E:", evidencia or "(sin evidencia)")
+        print("Variables ocultas Y:", ocultas or "(ninguna)")
+        print("Se calcula: P(X | E) = α Σ_Y P(X, E, Y)")
 
         resultados = {}
 

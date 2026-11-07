@@ -98,7 +98,14 @@ class Lector:
 
                     estado, valor = fila.split(":", 1)
 
-                    probabilidades[estado.strip()] = float(valor.strip())
+                    estado = estado.strip()
+
+                    if estado in probabilidades:
+                        raise ValueError(
+                            "Estado repetido en la tabla de " + nodo.nombre
+                        )
+
+                    probabilidades[estado] = float(valor.strip())
 
                 nodo.agregarFilaATabla([],probabilidades)
 
@@ -119,7 +126,14 @@ class Lector:
 
                         estado, probabilidad = valor.split(":", 1)
 
-                        probabilidades[estado.strip()] = float( probabilidad.strip())
+                        estado = estado.strip()
+
+                        if estado in probabilidades:
+                            raise ValueError(
+                                "Estado repetido en la tabla de " + nodo.nombre
+                            )
+
+                        probabilidades[estado] = float(probabilidad.strip())
 
                     nodo.agregarFilaATabla(estados_padres,probabilidades)
 
