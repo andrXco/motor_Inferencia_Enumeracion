@@ -1,0 +1,22 @@
+[NODO]
+Gripa
+estados: yes, no
+padres: -
+yes: 0.1
+no: 0.9s
+
+[NODO]
+Alergia
+estados: yes, no
+padres: -
+yes: 0.2
+no: 0.8
+
+[NODO]
+Congestion
+estados: yes, no
+padres: Gripa, Alergia
+yes, yes | yes: 0.95, no: 0.05
+yes, no | yes: 0.8, no: 0.2
+no, yes | yes: 0.7, no: 0.3
+no, no | yes: 0.05, no: 0.95

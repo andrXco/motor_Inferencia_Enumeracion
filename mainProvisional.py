@@ -1,21 +1,30 @@
 from lector import Lector
 
-
 lector = Lector()
 
-red = lector.cargar_red("relaciones.txt","tabla.txt")
+red = lector.cargar_red(
+    "relaciones_prueba.txt",
+    "tabla_prueba.txt"
+)
 
 red.mostrar_estructura()
+red.mostrar_tablas()
 
+print("Nodos cargados:", list(red.nodos.keys()))
 
+print("\nPRUEBA 4: NUEVA RED BAYESIANA")
 
-#La idea es armar diccionarios con las condiciones que ya sabemos
-asignacion = {
-    "Rain": "heavy",
-    "Maintenance": "yes",
-    "Train": "delayed",
-    "Appointment": "attend"
+evidencia = {
+    "Congestion": "yes"
 }
-# TRAER EL NODO QUE QUEREMOS AVERIGUAR
 
-probabilidad = red.calcular_probabilidad_conjunta(asignacion)
+resultado = red.inferencia_por_enumeracion(
+    "Gripa",
+    evidencia
+)
+
+print("\nRESULTADO FINAL")
+
+for estado in resultado:
+    print(estado, ":", round(resultado[estado], 4))
+

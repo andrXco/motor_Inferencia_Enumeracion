@@ -96,17 +96,140 @@ class RedBayesiana:
             print("Padres:", padres)
             print("Hijos:", hijos)
 
-def calcular_probabilidad_conjunta(self, asignacion):
+    def mostrar_tablas(self):
+        print("\nTABLAS DE PROBABILIDAD")
 
-    probabilidad = 1
+        for nodo in self.orden_topologico():
+            print("\nNodo:", nodo.nombre)
 
-    for nombre in asignacion:
+            for estados_padres, probabilidades in nodo.tabla.items():
 
-        nodo = self.obtener_nodo(nombre)
+                if len(nodo.padres) > 0:
+                    print("Condiciones:")
 
-        probabilidad *= nodo.obtener_probabilidad(
-            asignacion[nombre],
-            asignacion
-        )
+                    for i in range(len(nodo.padres)):
+                        print(
+                            " ",
+                            nodo.padres[i].nombre,
+                            "=",
+                            estados_padres[i]
+                        )
 
-    return probabilidad
+                for estado in nodo.estado:
+                    print(" ", estado, ":", probabilidades[estado])
+
+    def calcular_probabilidad_conjunta(self, asignacion):
+
+        probabilidad = 1
+
+        print("\nDETALLE DE MULTIPLICACION")
+
+        for nodo in self.orden_topologico():
+
+            nombre = nodo.nombre
+            estado = asignacion[nombre]
+
+            valor = nodo.obtenerProbabilidad(
+                estado,
+                asignacion
+            )
+
+            condiciones = []
+
+            for padre in nodo.padres:
+                condiciones.append(
+                    padre.nombre + "=" + asignacion[padre.nombre]
+                )
+
+            if len(condiciones) == 0:
+                print("P(", nombre, "=", estado, ") =", valor)
+            else:
+                print(
+                    "P(", nombre, "=", estado,
+                    "|", ", ".join(condiciones),
+                    ") =", valor
+                )
+
+            probabilidad *= valor
+
+        print("Producto =", round(probabilidad, 6))
+
+        return probabilidad
+    
+    def enumerar_y_sumar(self, asignacion):
+
+        combinaciones = [asignacion.copy()]
+
+        for nodo in self.orden_topologico():
+
+            if nodo.nombre not in asignacion:
+
+                nuevas_combinaciones = []
+
+                for combinacion in combinaciones:
+
+                    for estado in nodo.estado:
+
+                        nueva = combinacion.copy()
+                        nueva[nodo.nombre] = estado
+
+                        nuevas_combinaciones.append(nueva)
+
+                combinaciones = nuevas_combinaciones
+
+        suma = 0
+
+        for combinacion in combinaciones:
+
+            probabilidad = self.calcular_probabilidad_conjunta(
+                combinacion
+            )
+
+            print("Combinacion:", combinacion)
+            print("Probabilidad:", round(probabilidad, 4))
+
+            suma += probabilidad
+
+        return suma
+
+
+    def inferencia_por_enumeracion(self, nombre_consulta, evidencia):
+
+        nodo = self.obtener_nodo(nombre_consulta)
+
+        resultados = {}
+
+        for estado in nodo.estado:
+
+            asignacion = evidencia.copy()
+            asignacion[nombre_consulta] = estado
+
+            print("\nEvaluando:", nombre_consulta, "=", estado)
+
+            suma = self.enumerar_y_sumar(asignacion)
+
+            resultados[estado] = suma
+
+            print("Suma para", estado, "=", suma)
+
+        total = 0
+
+        for estado in resultados:
+            total += resultados[estado]
+
+        if total == 0:
+            raise ValueError("No es posible normalizar: probabilidad de evidencia igual a 0")
+
+        print("\nNORMALIZACION")
+
+        for estado in resultados:
+
+            resultados[estado] = resultados[estado] / total
+
+            print(
+                nombre_consulta, "=", estado,
+                ":", resultados[estado]
+            )
+
+        return resultados
+
