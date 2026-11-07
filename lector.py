@@ -123,5 +123,73 @@ class Lector:
 
                     nodo.agregarFilaATabla(estados_padres,probabilidades)
 
+        # Validar las tablas de probabilidad
+        for nodo in red.nodos.values():
+
+            if len(nodo.tabla) == 0:
+                raise ValueError(
+                    "El nodo " + nodo.nombre +
+                    " no tiene tabla de probabilidades"
+                )
+
+            for estados_padres, probabilidades in nodo.tabla.items():
+
+                if set(probabilidades.keys()) != set(nodo.estado):
+                    raise ValueError(
+                        "Estados incorrectos en la tabla de " +
+                        nodo.nombre
+                    )
+
+                for valor in probabilidades.values():
+                    if valor < 0 or valor > 1:
+                        raise ValueError(
+                            "Probabilidad fuera del rango [0,1] en " +
+                            nodo.nombre
+                        )
+
+                suma = sum(probabilidades.values())
+
+                if abs(suma - 1) > 0.000001:
+                    raise ValueError(
+                        "Las probabilidades de " +
+                        nodo.nombre +
+                        " no suman 1"
+                    )
+   
+        # Validar las combinaciones de los padres
+        for nodo in red.nodos.values():
+
+            combinaciones_esperadas = [()]
+
+            for padre in nodo.padres:
+
+                nuevas_combinaciones = []
+
+                for combinacion in combinaciones_esperadas:
+
+                    for estado in padre.estado:
+
+                        nueva = combinacion + (estado,)
+                        nuevas_combinaciones.append(nueva)
+
+                combinaciones_esperadas = nuevas_combinaciones
+
+            esperadas = set(combinaciones_esperadas)
+            existentes = set(nodo.tabla.keys())
+
+            faltantes = esperadas - existentes
+            adicionales = existentes - esperadas
+
+            if faltantes:
+                raise ValueError(
+                    "Faltan combinaciones en " +
+                    nodo.nombre + ": " + str(faltantes)
+                )
+
+            if adicionales:
+                raise ValueError(
+                    "Combinaciones no validas en " +
+                    nodo.nombre + ": " + str(adicionales)
+                )
                     
         return red
