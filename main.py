@@ -74,6 +74,8 @@ def main():
         epilog="Sin opciones se ejecuta Gripa dada Congestion=yes. "
                "Con archivos personalizados, omitir --evidencia significa sin evidencia.",
     )
+    parser.add_argument("prueba", nargs="?", choices=("original", "compleja"),
+                        help="Nombre corto de la prueba; por defecto se usa original")
     parser.add_argument("--estructura", help="Archivo de dependencias Padre -> Hijo")
     parser.add_argument("--tablas", help="Archivo con los bloques de probabilidad")
     parser.add_argument("--consulta", help="Nombre exacto del nodo consultado")
@@ -82,14 +84,28 @@ def main():
     opciones = parser.parse_args()
     seleccion = (opciones.estructura, opciones.tablas, opciones.consulta)
     if any(valor is not None for valor in seleccion):
+        if opciones.prueba is not None:
+            parser.error("Elige un nombre de prueba o archivos personalizados, no ambos.")
         if not all(seleccion):
             parser.error("Indica juntos --estructura, --tablas y --consulta.")
         estructura, tablas, consulta = seleccion
         elementos = opciones.evidencia or []
     else:
-        estructura, tablas, consulta = "relaciones_prueba.txt", "tabla_prueba.txt", "Gripa"
-        elementos = (["Congestion=yes"] if opciones.evidencia is None
+        pruebas = {
+            "original": (
+                "relaciones_prueba.txt", "tabla_prueba.txt", "Gripa",
+                ["Congestion=yes"],
+            ),
+            "compleja": (
+                "relaciones_gripa_compleja.txt", "tabla_gripa_compleja.txt", "Gripa",
+                ["Congestion=yes", "Fiebre=yes"],
+            ),
+        }
+        nombre_prueba = opciones.prueba or "original"
+        estructura, tablas, consulta, evidencia_predeterminada = pruebas[nombre_prueba]
+        elementos = (evidencia_predeterminada if opciones.evidencia is None
                      else opciones.evidencia)
+        print("PRUEBA SELECCIONADA:", nombre_prueba)
     try:
         evidencia = leer_evidencia(elementos)
     except ValueError as error:

@@ -1,0 +1,4 @@
+Gripa -> Congestion
+Alergia -> Congestion
+Gripa -> Fiebre
+OtraInfeccion -> Fiebre

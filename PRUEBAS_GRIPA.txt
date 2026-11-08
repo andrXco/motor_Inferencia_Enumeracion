@@ -1,0 +1,91 @@
+PRUEBAS DEL MOTOR: ¿LA PROBABILIDAD DE QUÉ?
+
+Son ejemplos académicos con probabilidades inventadas para validar el algoritmo. No son datos médicos ni un sistema de diagnóstico.
+En los archivos, yes significa sí y no significa no.
+
+1. PRUEBA ORIGINAL: GRIPA Y CONGESTIÓN
+
+Pregunta: según las tablas de esta red, ¿qué probabilidad hay de gripa si conocemos que hay congestión?
+
+Consulta: Gripa.
+Evidencia conocida: Congestion=yes.
+Variable desconocida que se enumera: Alergia.
+
+Archivos: relaciones_prueba.txt y tabla_prueba.txt.
+
+Desde la terminal de la carpeta del proyecto:
+python main.py
+
+O indicando la configuración completa:
+python main.py --estructura relaciones_prueba.txt --tablas tabla_prueba.txt --consulta Gripa --evidencia Congestion=yes
+
+Resultado esperado:
+P(Gripa=yes | Congestion=yes) = 0.3387755102, aproximadamente 33.88 %.
+P(Gripa=no | Congestion=yes) = 0.6612244898, aproximadamente 66.12 %.
+
+Es la probabilidad de GRIPA cuando ya conocemos la congestión. No es la probabilidad de congestión dada gripa: esa sería otra consulta.
+
+2. PRUEBA COMPLEJA: CONGESTIÓN Y FIEBRE
+
+Pregunta: según esta red, ¿qué probabilidad hay de gripa si conocemos que hay congestión y fiebre?
+
+Consulta: Gripa.
+Evidencia conocida: Congestion=yes, Fiebre=yes.
+Variables desconocidas que se enumeran: Alergia y OtraInfeccion.
+
+Dependencias del modelo:
+- Gripa y Alergia influyen en Congestion.
+- Gripa y OtraInfeccion influyen en Fiebre.
+- Gripa, Alergia y OtraInfeccion son raíces independientes en este modelo.
+
+Archivos: relaciones_gripa_compleja.txt y tabla_gripa_compleja.txt.
+
+Comando:
+python main.py --estructura relaciones_gripa_compleja.txt --tablas tabla_gripa_compleja.txt --consulta Gripa --evidencia Congestion=yes Fiebre=yes
+
+Para cada estado de Gripa, el motor prueba cuatro combinaciones:
+Alergia=yes, OtraInfeccion=yes.
+Alergia=yes, OtraInfeccion=no.
+Alergia=no, OtraInfeccion=yes.
+Alergia=no, OtraInfeccion=no.
+
+Son ocho combinaciones en total. En cada una multiplica:
+P(Gripa) * P(Alergia) * P(OtraInfeccion) * P(Congestion | Gripa,Alergia) * P(Fiebre | Gripa,OtraInfeccion).
+
+Resultados esperados:
+Suma sin normalizar para Gripa=yes: 0.075032.
+Suma sin normalizar para Gripa=no: 0.009558.
+Total de evidencia: 0.08459.
+P(Gripa=yes | Congestion=yes,Fiebre=yes) = 0.075032 / 0.08459, aproximadamente 88.70 %.
+P(Gripa=no | Congestion=yes,Fiebre=yes) = 0.009558 / 0.08459, aproximadamente 11.30 %.
+
+3. CONTRASTE: CONGESTIÓN SIN FIEBRE
+
+Pregunta: con los mismos datos del modelo, ¿qué probabilidad hay de gripa si hay congestión pero NO hay fiebre?
+
+Comando:
+python main.py --estructura relaciones_gripa_compleja.txt --tablas tabla_gripa_compleja.txt --consulta Gripa --evidencia Congestion=yes Fiebre=no
+
+Resultados esperados:
+Suma sin normalizar para Gripa=yes: 0.007968.
+Suma sin normalizar para Gripa=no: 0.152442.
+Total de evidencia: 0.16041.
+P(Gripa=yes | Congestion=yes,Fiebre=no) = 0.007968 / 0.16041, aproximadamente 4.97 %.
+P(Gripa=no | Congestion=yes,Fiebre=no), aproximadamente 95.03 %.
+
+La evidencia cambia y, por eso, la distribución final también cambia.
+
+4. QUÉ COMPROBAR EN LA SALIDA
+
+- Que los archivos, la consulta y las evidencias sean los que elegiste.
+- Que aparezcan la estructura y las tablas cargadas.
+- Que se muestren las variables ocultas y las combinaciones enumeradas.
+- Que se impriman los productos, las sumas y las divisiones de normalización.
+- Que las probabilidades finales sumen aproximadamente 1.
+- Que el resultado coincida con el esperado para esa prueba.
+
+Ejecutar sin errores y sumar 1 no basta por sí solo para demostrar que cualquier caso es correcto; también hay que comparar con el cálculo esperado.
+
+Para abrir la terminal en Visual Studio Code: Terminal > Nueva terminal.
+Los comandos deben ejecutarse desde la carpeta que contiene main.py.
+Si Windows no reconoce python, puedes intentar el mismo comando con py.
