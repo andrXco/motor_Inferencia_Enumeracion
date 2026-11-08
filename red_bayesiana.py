@@ -225,7 +225,7 @@ class RedBayesiana:
         print("Consulta X:", nombre_consulta)
         print("Evidencia E:", evidencia or "(sin evidencia)")
         print("Variables ocultas Y:", ocultas or "(ninguna)")
-        print("Se calcula: P(X | E) = α Σ_Y P(X, E, Y)")
+        print("Se calcula: P(X | E) = alpha * sum_Y P(X, E, Y)")
 
         resultados = {}
 
