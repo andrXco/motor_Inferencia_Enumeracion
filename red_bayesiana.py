@@ -154,7 +154,7 @@ class RedBayesiana:
 
             probabilidad *= valor
 
-        print("Producto =", round(probabilidad, 6))
+        print("Producto =", format(probabilidad, ".12g"))
 
         return probabilidad
     
@@ -188,7 +188,7 @@ class RedBayesiana:
             )
 
             print("Combinacion:", combinacion)
-            print("Probabilidad:", round(probabilidad, 4))
+            print("Probabilidad:", format(probabilidad, ".12g"))
 
             suma += probabilidad
 
@@ -240,7 +240,7 @@ class RedBayesiana:
 
             resultados[estado] = suma
 
-            print("Suma para", estado, "=", suma)
+            print("Suma para", estado, "=", format(suma, ".12g"))
 
         total = 0
 
@@ -251,14 +251,20 @@ class RedBayesiana:
             raise ValueError("No es posible normalizar: probabilidad de evidencia igual a 0")
 
         print("\nNORMALIZACION")
+        print("Sumas sin normalizar:", resultados)
+        print("Total P(E) =", format(total, ".12g"))
+        print("Factor alpha = 1 / P(E) =", format(1 / total, ".12g"))
 
         for estado in resultados:
 
+            sin_normalizar = resultados[estado]
             resultados[estado] = resultados[estado] / total
 
             print(
                 nombre_consulta, "=", estado,
-                ":", resultados[estado]
+                ":", format(sin_normalizar, ".12g"),
+                "/", format(total, ".12g"),
+                "=", format(resultados[estado], ".12g")
             )
 
         return resultados
